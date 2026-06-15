@@ -5,17 +5,17 @@ dir()  # 知道工具箱有哪些工具，进入某个工具箱
 help()  # 获取每个工具的使用方法
 ```
 
-#核心数据结构：张量 (Tensor)
+# 核心数据结构：张量 (Tensor)
 
 
 
-#自动求导机制 (Autograd)
+# 自动求导机制 (Autograd)
 
 
 
-#数据加载与预处理 (Data I/O)
+# 数据加载与预处理 (Data I/O)
 
-###Dataset
+### Dataset
 
 Dataset：PyTorch的数据抽象基类，需重写`__len__`和`__getitem__`。前者返回样本总数，后者按索引读取单个样本（如图片与标签）。它将原始数据封装为可索引的集合，解耦数据存储与读取逻辑，为后续批量加载提供统一接口。
 
@@ -665,17 +665,16 @@ writer.close()  # 关闭TensorBoard写入器
 
 
 
-#### **模型容器**
+#### 模型容器
 
 - `nn.Sequential` (顺序结构)
 - `nn.ModuleList` / `nn.ModuleDict` (动态结构)
 
-#### **参数初始化策略**
+#### 参数初始化策略
 
 - Xavier / Kaiming 初始化
 - 自定义初始化权重函数
 
-![77708024426](C:\Users\21467\AppData\Local\Temp\1777080244265.png)
 
 ```
 import torch
@@ -788,9 +787,9 @@ writer.close()
 
 
 
-#损失函数与优化器
+# 损失函数与优化器
 
-###**损失函数 (Loss Functions)**
+### 损失函数 (Loss Functions)
 
 - 分类：`CrossEntropyLoss`, `NLLLoss`, `BCEWithLogitsLoss`
 - 回归：`MSELoss`, `L1Loss`, `SmoothL1Loss`
@@ -862,7 +861,7 @@ for data in dataloader:
     
 ```
 
-###**优化器 (Optimizers)**
+###  优化器 (Optimizers)
 
 - 基础：`SGD`, `Adam`, `AdamW`, `RMSprop`
 - 学习率策略 (`torch.optim.lr_scheduler`)
@@ -938,7 +937,7 @@ for epoch in range(20):
 
 
 
-#标准训练流程 (Train Loop)
+# 标准训练流程 (Train Loop)
 
 ### 标准CPU训练
 
@@ -1327,7 +1326,7 @@ writer.close()
 
 
 
-#现有网络模型的使用与修改
+# 现有网络模型的使用与修改
 
 ```
 import torchvision
@@ -1362,7 +1361,7 @@ print(vgg16_false)
 
 
 
-#模型保存、加载与可视化
+# 模型保存、加载与可视化
 
 
 
@@ -1458,34 +1457,27 @@ print("done")
 
 
 
-
-
-
-
-
-#调试技巧与常见坑
+# 调试技巧与常见坑
 
 使用   **google colab**   使用免费GPU
 
-* ```
+```
   #测试GPU是否可用
   import torch
   print(torch.cuda.is_available())
-  ```
+ ```
 
-* 运行模型代码
 
-  ```
-  import torch
+# 完整过程示例
+
+```python
+import torch
   import torch.optim
   import torchvision
   from torch import nn
   from torch.utils.data import DataLoader
   from torch.utils.tensorboard import SummaryWriter
   import time
-  ```
-
-
   # 创建模型
   class Mymodel(nn.Module):
       def __init__(self):
@@ -1689,9 +1681,4 @@ print("done")
       print("模型已保存")
 
   writer.close()
-  ```
-
-* 在文件夹中找到训练后保存好的模型
-
-* 将该模型（XXXX.pth）保存到自己的项目中进行测试
   ```
