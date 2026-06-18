@@ -1,3 +1,23 @@
+# 初始工作
+```python
+import openai
+import os
+
+from dotenv import load_dotenv, find_dotenv
+_ = load_dotenv(find_dotenv()) # read local .env file
+
+openai.api_key  = os.getenv('OPENAI_API_KEY')
+
+def get_completion(prompt, model="gpt-3.5-turbo",temperature=0): # Andrew mentioned that the prompt/ completion paradigm is preferable for this class
+    messages = [{"role": "user", "content": prompt}]
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=messages,
+        temperature=temperature, # this is the degree of randomness of the model's output
+    )
+    return response.choices[0].message["content"]
+```
+
 # 第一节Guidelines（提示词编写原则）
 
 > DeepLearning.AI - ChatGPT Prompt Engineering for Developers  
@@ -1690,3 +1710,1268 @@ Inferring is the process of extracting and reasoning about information that is i
 ```
 
 Inferring 的本质是从文本中提取并推断隐藏的信息。
+
+
+# 第五节 Transforming（文本转换）
+
+> DeepLearning.AI - ChatGPT Prompt Engineering for Developers  
+> Lesson 5: Transforming
+
+---
+
+## 核心思想
+
+Transforming（文本转换）指的是：
+
+```text
+输入文本
+↓
+改变文本形式
+↓
+输出新的文本
+```
+
+与前两节不同：
+
+```text
+Summarizing=压缩文本
+```
+
+```text
+Inferring=提取信息
+```
+
+```text
+Transforming=改变文本
+```
+
+模型并不重点关注文本内容本身，而是关注：
+
+- 语言
+- 风格
+- 格式
+- 表达方式
+
+---
+
+## 翻译（Translation）
+
+这是最常见的转换任务。
+
+---
+
+### 示例
+
+Prompt：
+
+```text
+Translate the following text to Chinese.
+
+"""
+{text}
+"""
+```
+
+---
+
+### 输出
+
+```text
+中文翻译结果
+```
+
+---
+
+### 多语言翻译
+
+Prompt：
+
+```text
+Translate the following text into:
+
+- French
+- Spanish
+- Japanese
+
+"""
+{text}
+"""
+```
+
+---
+
+### 输出
+
+```text
+French:
+...
+
+Spanish:
+...
+
+Japanese:
+...
+```
+
+---
+
+## 自动语言识别
+
+模型能够自动识别输入语言。
+
+---
+
+### 示例
+
+Prompt：
+
+```text
+Tell me which language this is:
+
+"""
+{text}
+"""
+```
+
+---
+
+### 输出
+
+```text
+Japanese
+```
+
+---
+
+### 应用场景
+
+```text
+国际化产品
+跨语言客服
+文档翻译
+```
+
+---
+
+## 语气转换（Tone Transformation）
+
+相同内容可以使用不同语气表达。
+
+---
+
+### 示例
+
+输入：
+
+```text
+Dude, your order is late.
+```
+
+---
+
+Prompt：
+
+```text
+Rewrite the following text
+in a professional tone.
+
+"""
+{text}
+"""
+```
+
+---
+
+输出：
+
+```text
+We apologize for the delay in your order.
+```
+
+---
+
+### 常见语气
+
+```text
+Formal（正式）
+Casual（口语）
+Professional（专业）
+Friendly（友好）
+Academic（学术）
+```
+
+---
+
+## 风格转换（Style Transformation）
+
+改变写作风格。
+
+---
+
+### 示例
+
+Prompt：
+
+```text
+Rewrite the following text
+in Shakespeare style.
+
+"""
+{text}
+"""
+```
+
+---
+
+输出：
+
+```text
+Thou hast...
+```
+
+---
+
+### 常见风格
+
+```text
+Shakespeare
+Academic
+News Report
+Marketing Copy
+Technical Writing
+```
+
+---
+
+## 拼写与语法修正
+
+利用模型完成校对。
+
+---
+
+### 示例
+
+输入：
+
+```text
+The girl with the black and white puppies have a ball.
+```
+
+---
+
+Prompt：
+
+```text
+Proofread and correct the following text.
+
+"""
+{text}
+"""
+```
+
+---
+
+输出：
+
+```text
+The girl with the black and white puppies has a ball.
+```
+
+---
+
+### 应用场景
+
+```text
+邮件润色
+论文修改
+英文写作
+简历优化
+```
+
+---
+
+## 文本改写（Rewriting）
+
+保持原意不变。
+
+优化表达方式。
+
+---
+
+### 示例
+
+Prompt：
+
+```text
+Rewrite the following text
+using simpler language.
+
+"""
+{text}
+"""
+```
+
+---
+
+### 输出
+
+```text
+更简单、更易理解的表达
+```
+
+---
+
+### 应用场景
+
+```text
+技术文档
+教育内容
+大众科普
+```
+
+---
+
+## 格式转换（Format Conversion）
+
+将一种格式转换为另一种格式。
+
+---
+
+### 示例
+
+输入：
+
+```json
+{
+  "name":"Tom",
+  "age":20
+}
+```
+
+---
+
+Prompt：
+
+```text
+Convert the following JSON
+into an HTML table.
+```
+
+---
+
+输出：
+
+```html
+<table>
+    ...
+</table>
+```
+
+---
+
+### 常见格式转换
+
+```text
+JSON → HTML
+
+JSON → Markdown
+
+CSV → Markdown
+
+HTML → Markdown
+
+XML → JSON
+```
+
+---
+
+## 课程案例：语法检查器
+
+课程演示：
+
+```text
+检查语法错误
+↓
+修正文本
+↓
+给出优化版本
+```
+
+---
+
+### Prompt
+
+```text
+Proofread and correct the following text.
+
+If no mistakes are found,
+output "No errors found".
+
+"""
+{text}
+"""
+```
+
+---
+
+### 输出
+
+```text
+修正后的内容
+```
+
+或者：
+
+```text
+No errors found.
+```
+
+---
+
+## 实际应用场景
+
+### 翻译工具
+
+```text
+多语言翻译
+本地化系统
+国际化产品
+```
+
+---
+
+### 写作辅助
+
+```text
+语法修正
+内容润色
+风格优化
+```
+
+---
+
+### 内容生产
+
+```text
+营销文案
+技术文档
+新闻报道
+```
+
+---
+
+### 数据处理
+
+```text
+格式转换
+数据清洗
+自动生成报告
+```
+
+---
+
+## 本章重点
+
+### Transforming 的核心能力
+
+```text
+保持原始信息
+↓
+改变表达方式
+```
+
+---
+
+### 常见任务
+
+- Translation（翻译）
+- Language Detection（语言识别）
+- Tone Transformation（语气转换）
+- Style Transformation（风格转换）
+- Proofreading（校对）
+- Rewriting（改写）
+- Format Conversion（格式转换）
+
+---
+
+### 最佳实践
+
+明确指定：
+
+```text
+转换目标
+↓
+输出格式
+↓
+目标风格
+```
+
+例如：
+
+```text
+Translate to Chinese.
+
+Return Markdown format.
+
+Use a professional tone.
+```
+
+---
+
+## 一句话总结
+
+```text
+Transforming is about changing how information is expressed while preserving its meaning.
+```
+
+Transforming 的本质是在保留原意的前提下改变信息的表达形式。
+
+
+# 第六节 Expanding（文本扩展）
+
+> DeepLearning.AI - ChatGPT Prompt Engineering for Developers
+> Lesson 6: Expanding
+
+---
+
+## 核心思想
+
+Expanding（扩展）指：
+
+```text
+少量信息
+↓
+生成更多内容
+```
+
+例如：
+
+```text
+用户评论
+↓
+客服回复
+```
+
+```text
+提纲
+↓
+完整文章
+```
+
+```text
+产品特点
+↓
+营销文案
+```
+
+---
+
+## 课程案例：自动生成客服回复
+
+输入：
+
+```text
+用户评论
++
+情感分析结果
+```
+
+输出：
+
+```text
+客服回复邮件
+```
+
+---
+
+### Prompt
+
+```python
+prompt = f"""
+You are a customer service AI assistant.
+
+Given the customer review
+generate a response email.
+
+Customer review:
+{review}
+
+Sentiment:
+{sentiment}
+"""
+```
+
+---
+
+### 工作流程
+
+```text
+Review
+↓
+Inferring
+↓
+Sentiment
+↓
+Expanding
+↓
+Response Email
+```
+
+---
+
+### 作用
+
+结合前面章节：
+
+```text
+Inferring
++
+Expanding
+=
+自动客服系统
+```
+
+---
+
+## Temperature 参数
+
+课程重点介绍了：
+
+```python
+temperature
+```
+
+用于控制模型输出的随机性。
+
+---
+
+### temperature = 0
+
+```python
+response = get_completion(
+    prompt,
+    temperature=0
+)
+```
+
+特点：
+
+```text
+最确定
+最稳定
+最可复现
+```
+
+适用于：
+
+- 信息提取
+- 分类任务
+- 摘要任务
+- 数据处理
+
+---
+
+### temperature = 0.7
+
+特点：
+
+```text
+有一定随机性
+```
+
+适用于：
+
+- 日常对话
+- 文本生成
+
+---
+
+### temperature = 1
+
+特点：
+
+```text
+创造性更强
+结果变化更大
+```
+
+适用于：
+
+- 创意写作
+- 故事生成
+- 文案创作
+
+---
+
+### temperature = 2
+
+特点：
+
+```text
+随机性非常高
+```
+
+生成结果可能：
+
+```text
+不稳定
+偏离主题
+```
+
+通常较少使用。
+
+---
+
+## Temperature 的本质
+
+可以理解为：
+
+```text
+temperature 越低
+↓
+越保守
+
+temperature 越高
+↓
+越发散
+```
+
+---
+
+## 使用建议
+
+### 事实性任务
+
+```python
+temperature = 0
+```
+
+例如：
+
+- Summarizing
+- Inferring
+- 信息提取
+- 分类
+
+---
+
+### 创意任务
+
+```python
+temperature = 0.7 ~ 1.0
+```
+
+例如：
+
+- Expanding
+- 文案生成
+- 故事生成
+
+---
+
+## 本章重点
+
+### Expanding
+
+```text
+输入少量信息
+↓
+生成完整内容
+```
+
+---
+
+### Temperature
+
+控制模型输出随机性：
+
+```text
+低 Temperature
+=
+稳定
+
+高 Temperature
+=
+创造性
+```
+
+---
+
+## 一句话总结
+
+```text
+Expanding generates new content,
+while temperature controls how creative that content will be.
+```
+
+Expanding 负责生成内容，Temperature 负责控制生成内容的创造性。
+
+
+
+# 第七节 Chatbot（聊天机器人）
+
+> DeepLearning.AI - ChatGPT Prompt Engineering for Developers
+> Lesson 7: Chatbot
+
+---
+
+## 核心思想
+
+前面几节课程：
+
+```text
+Summarizing
+↓
+压缩文本
+
+Inferring
+↓
+理解文本
+
+Transforming
+↓
+转换文本
+
+Expanding
+↓
+生成文本
+```
+
+本节课程：
+
+```text
+将这些能力组合起来
+↓
+构建一个聊天机器人
+```
+
+---
+
+## ChatGPT 的消息格式
+
+聊天模型接收的是消息列表（messages）。
+
+```python
+messages = [
+    {
+        "role": "system",
+        "content": "You are a helpful assistant."
+    },
+    {
+        "role": "user",
+        "content": "Hello!"
+    }
+]
+```
+
+---
+
+## 三种角色（Role）
+
+### System
+
+定义 AI 的身份和行为。
+
+例如：
+
+```text
+You are a helpful assistant.
+```
+
+```text
+You are a Python teacher.
+```
+
+```text
+You are a customer service assistant.
+```
+
+---
+
+### User
+
+用户输入。
+
+```text
+用户提出的问题
+```
+
+例如：
+
+```text
+How do I learn Python?
+```
+
+---
+
+### Assistant
+
+模型历史回复。
+
+例如：
+
+```text
+You can start with basic syntax...
+```
+
+---
+
+## Role 的作用
+
+```text
+System
+↓
+决定 AI 是谁
+
+User
+↓
+提出需求
+
+Assistant
+↓
+保存历史对话
+```
+
+---
+
+## 多轮对话
+
+与普通 Prompt 最大的区别：
+
+```text
+聊天机器人需要记住上下文
+```
+
+---
+
+### 示例
+
+第一轮：
+
+```text
+User:
+My name is Tom.
+```
+
+```text
+Assistant:
+Nice to meet you.
+```
+
+---
+
+第二轮：
+
+```text
+User:
+What is my name?
+```
+
+模型回答：
+
+```text
+Tom
+```
+
+---
+
+原因：
+
+历史消息被保存在：
+
+```python
+messages
+```
+
+中。
+
+---
+
+## 对话状态管理
+
+每轮对话：
+
+```text
+用户输入
+↓
+模型回复
+↓
+加入 messages
+```
+
+---
+
+例如：
+
+```python
+messages.append(
+    {
+        "role":"user",
+        "content":"Hello"
+    }
+)
+
+messages.append(
+    {
+        "role":"assistant",
+        "content":"Hi!"
+    }
+)
+```
+
+---
+
+随着对话进行：
+
+```text
+messages
+不断增长
+```
+
+形成上下文。
+
+---
+
+## System Prompt 的重要性
+
+课程强调：
+
+```text
+System Prompt
+决定机器人行为
+```
+
+---
+
+### 示例
+
+普通助手
+
+```text
+You are a helpful assistant.
+```
+
+---
+
+### 数学老师
+
+```text
+You are a math tutor.
+```
+
+---
+
+### 客服机器人
+
+```text
+You are a customer service assistant.
+```
+
+---
+
+### 指定回答风格
+
+```text
+Explain everything
+in simple language.
+```
+
+---
+
+### 指定回答格式
+
+```text
+Always answer
+in bullet points.
+```
+
+---
+
+## 课程案例：披萨点餐机器人
+
+课程最终案例：
+
+```text
+Pizza Ordering Bot
+```
+
+---
+
+### 功能
+
+- 查看菜单
+- 点餐
+- 添加配料
+- 修改订单
+- 计算价格
+- 生成订单摘要
+
+---
+
+### System Prompt
+
+定义：
+
+```text
+你是一名披萨店客服。
+```
+
+并要求：
+
+```text
+按照固定流程完成点餐。
+```
+
+---
+
+### 工作流程
+
+```text
+用户点餐
+↓
+确认商品
+↓
+确认数量
+↓
+确认配送方式
+↓
+生成订单
+```
+
+---
+
+## Prompt 可以定义业务规则
+
+例如：
+
+```text
+Don't ask for more than one question at a time.
+```
+
+---
+
+```text
+Collect the entire order
+before summarizing it.
+```
+
+---
+
+```text
+Confirm the order
+before payment.
+```
+
+---
+
+说明：
+
+```text
+Prompt
+不仅能控制回答内容
+
+还能控制业务流程
+```
+
+---
+
+## Chatbot 的本质
+
+聊天机器人并不是新的模型能力。
+
+而是：
+
+```text
+System Prompt
++
+Conversation History
++
+LLM
+```
+
+---
+
+可以理解为：
+
+```text
+角色设定
++
+上下文记忆
++
+文本生成
+```
+
+---
+
+## 本章重点
+
+### ChatGPT 消息格式
+
+```python
+messages = [
+    {"role":"system","content":"..."},
+    {"role":"user","content":"..."},
+    {"role":"assistant","content":"..."}
+]
+```
+
+---
+
+### 三种角色
+
+- System
+- User
+- Assistant
+
+---
+
+### 多轮对话
+
+```text
+历史消息
+↓
+保存上下文
+↓
+实现连续对话
+```
+
+---
+
+### System Prompt
+
+决定：
+
+- 身份
+- 风格
+- 规则
+- 流程
+
+---
+
+### Chatbot
+
+本质：
+
+```text
+Prompt Engineering
++
+Conversation History
+```
+
+---
+
+## 一句话总结
+
+```text
+A chatbot is simply an LLM with a role and a conversation history.
+```
+
+聊天机器人本质上就是：
+
+```text
+角色设定
++
+历史对话
++
+大语言模型
+```
