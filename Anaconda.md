@@ -5,7 +5,7 @@
 
 创建新的python环境  conda create -n env_name python=3.x
 
-查看已有的python环境  conda envlist
+查看已有的python环境  conda info --envs
 
 进入已有的python环境  conda activate env_name
 
